@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 import os
 import hashlib
-
+import datetime
 import processImage
 from processImage import *
 
@@ -25,12 +25,12 @@ def upload_image():
     if file.filename == '' or not file.filename.lower().endswith('.png'):
         return jsonify({"error": "Only PNG files are accepted"}), 400
 
-    file.filename=hashlib.md5(file.filename.encode('utf-8')).hexdigest()
+    file.filename=hashlib.md5(file.filename.encode('utf-8') + datetime.date.today().strftime("%B %d, %Y").encode('utf-8')).hexdigest()
     file_path = os.path.join(UPLOAD_DIR, file.filename)
     file.save(file_path)
 
     match = identifier.process(file_path)
-
+    os.remove(file_path)
     # Return a success response
     return jsonify({"message": match, "filename": file.filename}), 200
 
