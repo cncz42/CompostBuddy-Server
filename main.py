@@ -1,19 +1,39 @@
-import torch
-import clip
-from PIL import Image
+from flask import Flask, request, jsonify
+import os
+import hashlib
 
-device = "cuda" if torch.cuda.is_available() else "cpu"
-model, preprocess = clip.load("ViT-B/32", device=device)
+import processImage
+from processImage import *
 
-image = preprocess(Image.open("banana.png")).unsqueeze(0).to(device)
-text = clip.tokenize(["a diagram", "a flow chart", "a dog", "a cat", "a fruit", "a banana", "a png"]).to(device)
+# Initialize Flask app
+app = Flask(__name__)
 
-with torch.no_grad():
-    image_features = model.encode_image(image)
-    text_features = model.encode_text(text)
+# Define upload folder
+UPLOAD_DIR = "uploads"
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+identifier = processImage.ImageProcessor()
 
-    logits_per_image, logits_per_text = model(image, text)
-    probs = logits_per_image.softmax(dim=-1).cpu().numpy()
+@app.route('/upload', methods=['POST'])
+def upload_image():
+    # Check if the request has a file
+    if 'file' not in request.files:
+        return jsonify({"error": "No file part in the request"}), 400
 
-print("Label probs:", probs)  # prints: [[0.9927937  0.00421068 0.00299572]]
-#A COMMENT
+    file = request.files['file']
+
+    # Check if the file is a PNG
+    if file.filename == '' or not file.filename.lower().endswith('.png'):
+        return jsonify({"error": "Only PNG files are accepted"}), 400
+
+    file.filename=hashlib.md5(file.filename.encode('utf-8')).hexdigest()
+    file_path = os.path.join(UPLOAD_DIR, file.filename)
+    file.save(file_path)
+
+    match = identifier.process(file_path)
+
+    # Return a success response
+    return jsonify({"message": match, "filename": file.filename}), 200
+
+# Start the Flask server
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=8080)

@@ -6,4 +6,5 @@ torchvision
 ftfy
 regex
 tqdm
+Flask
 clip @ git+https://github.com/openai/CLIP.git
