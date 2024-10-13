@@ -1,0 +1,6 @@
+[submodule "static/CompostBuddy-GUI"]
+	path = static/CompostBuddy-GUI
+	url = https://github.com/cncz42/CompostBuddy-GUI
+[submodule "CompostBuddy-GUI"]
+	path = CompostBuddy-GUI
+	url = https://github.com/cncz42/CompostBuddy-GUI
