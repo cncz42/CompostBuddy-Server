@@ -7,6 +7,7 @@ ftfy
 regex
 tqdm
 Flask
+pandas
 clip @ git+https://github.com/openai/CLIP.git
 
 pandas==2.2.3

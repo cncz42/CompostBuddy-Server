@@ -1,8 +1,8 @@
 import pandas
 
-def check_item_in_csv(item_name: str, csv_file: str = 'Compost-Server/compost_data/compost_data.csv') -> bool:
+
+def check_item_in_dataframe(item_name: str, data_frame) -> bool:
     # Read the CSV file into a DataFrame
-    data_frame = pandas.read_csv(csv_file, header=None)
     # Find the row where the first column matches the item name (case-insensitive)
     result = data_frame[data_frame[0].str.strip().str.lower() == item_name.strip().lower()]
     
