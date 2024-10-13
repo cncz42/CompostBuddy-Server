@@ -2,7 +2,7 @@ import torch
 import clip
 import pandas
 from PIL import Image
-from check_item import check_item_in_csv, check_item_in_dataframe
+from check_item import check_item_in_dataframe
 
 
 class ImageProcessor:

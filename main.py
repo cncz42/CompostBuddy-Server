@@ -29,10 +29,9 @@ def upload_image():
     file_path = os.path.join(UPLOAD_DIR, file.filename)
     file.save(file_path)
 
-    match = identifier.process(file_path)
-    os.remove(file_path)
+    match, compostable = identifier.process(file_path)
     # Return a success response
-    return jsonify({"message": match, "filename": file.filename}), 200
+    return jsonify({"compostable": compostable,"message": match}), 200
 
 # Start the Flask server
 if __name__ == "__main__":
