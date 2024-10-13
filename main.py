@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory, render_template
 import os
 import hashlib
 import datetime
@@ -6,12 +6,27 @@ import processImage
 from processImage import *
 
 # Initialize Flask app
-app = Flask(__name__)
+app = Flask(__name__,
+            static_folder='./public/browser',
+            template_folder='public/browser'
+            )
 
 # Define upload folder
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 identifier = processImage.ImageProcessor()
+
+@app.route('/<path:path>', methods=['GET'])
+def serve_static_files(path):
+    return send_from_directory(app.static_folder, path)
+
+# Route for serving the Angular app (default to index.html)
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve_angular(path):
+    # Angular app routes, default to index.html if path not found
+    return render_template('index.html')
+
 
 @app.route('/upload', methods=['POST'])
 def upload_image():
